@@ -1,0 +1,30 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "uglify": "browserify assets/js/main.js | uglifyjs > assets/js/bundle.js && uglifycss assets/css/main.css > assets/css/min.css",
+    "start": "npm run uglify && node app.js",
+    "watch": "npm run start && nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackshackshacks/performance-matters-server-side.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hackshackshacks/performance-matters-server-side/issues"
+  },
+  "homepage": "https://github.com/hackshackshacks/performance-matters-server-side#readme",
+  "dependencies": {
+    "compression": "^1.7.2",
+    "express": "^4.16.3",
+    "nunjucks": "^3.1.2",
+    "uglifycss": "0.0.29",
+    "browserify": "^16.1.1",
+    "socket.io": "^2.1.0",
+    "minify": "^3.0.5"
+  }
+}
