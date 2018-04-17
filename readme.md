@@ -1,10 +1,5 @@
-# real-time-web-project
-
-This repo will hold the project you're going to build during the last two weeks of RTW. It functions as a way to show you've attained the following learning goals of this course:
-
-* Build a Node Web App which consumes an external data source through an API and serves a frontend using routing and templating techniques.
-* Create a "live" web app which reflects changes to the back-end data model in reactive front-end views, using real-time, event-based, messaging technologies like sockets or server-sent-events.
-* Describe their work in a professional readme with insightful diagrams showing the life cycle of their data.
+# Imageguess
+Imageguess is an online multiplayer game. The website shows an image and the goal is to guess a tag that belongs to this image. For example: An image of the beach could have the tag 'Summer'. Guessing right earns you 1 point. After 15 images the game ends and the winner is chosen.
 
 <!-- ☝️ replace this description -->
 
