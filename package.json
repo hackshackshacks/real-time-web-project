@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "uglify": "browserify assets/js/main.js | uglifyjs > assets/js/bundle.js && uglifycss assets/css/main.css > assets/css/min.css",
-    "start": "npm run uglify",
-    "watch": "npm run start && nodemon app.js"
+    "prod": "npm run uglify",
+    "watch": "npm run prod && nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +19,14 @@
   },
   "homepage": "https://github.com/hackshackshacks/performance-matters-server-side#readme",
   "dependencies": {
+    "browserify": "^16.1.1",
     "compression": "^1.7.2",
     "express": "^4.16.3",
-    "nunjucks": "^3.1.2",
-    "uglifycss": "^0.0.29",
-    "browserify": "^16.1.1",
-    "socket.io": "^2.1.0",
+    "flickrapi": "^0.6.0",
     "minify": "^3.0.5",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^2.1.2",
+    "nunjucks": "^3.1.2",
+    "socket.io": "^2.1.0",
+    "uglifycss": "^0.0.29"
   }
 }
