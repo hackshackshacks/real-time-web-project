@@ -26,22 +26,34 @@ const game = {
   active: true,
   init: function() {
     api.getPhoto()
+    game.start()
+  },
+  start: function () {
+    io.emit('gameState', game.active)
     setInterval(function () {
       if (game.time > 0 && game.active) {
         game.time--
         io.emit('time', game.time)
       } else if (game.time === 0 && game.active) {
-        game.active = false
-        io.emit('tags', game.currentTags)
-        io.emit('time', game.time)
-        setTimeout(() => {
-          game.active = true
-          api.getPhoto()
-          game.time = game.duration
-          io.emit('time', game.time)
-        }, 5000)
+        game.end()        
       }
     }, 1000)
+  },
+  end: function () {
+    game.active = false
+    io.emit('gameState', game.active)
+    io.emit('tags', game.currentTags)
+    io.emit('time', game.time)
+    setTimeout(() => {
+      game.reset()
+    }, 5000)
+  },
+  reset: function () {
+    game.active = true
+    io.emit('gameState', game.active)
+    api.getPhoto()
+    game.time = game.duration
+    io.emit('time', game.time)
   }
 }
 const api = {
@@ -91,30 +103,42 @@ app.get('/', (req, res) => {
 
 io.on('connection', function (socket) {
   console.log('user enter')
-  socket.username = socket.id
-  socket.score = 0
-  game.players.push(socket.username)
+  game.players.push({
+    id: socket.id,
+    username: socket.id,
+    score: 0
+  })
   socket.emit('photo', game.currentPhoto)
+  io.emit('players', game.players)
   socket.on('name', function (name) {
-    var playerIndex = game.players.indexOf(socket.username)
-    game.players[playerIndex] = name
-    socket.username = name
-    console.log('new username:', socket.username)
+    game.players.forEach((player) => {
+      if (player.id === socket.id) {
+        player.username = name
+      }
+    })
+    io.emit('players', game.players)
   })
   socket.on('guess', function (guess) {
     console.log('guess:', guess)
     console.log('guess in array:', helper.checkArray(game.currentTags, guess.toLowerCase()))
     console.log(game.currentTags)
     if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
-      socket.score = socket.score + game.time
-      game.active = false
-      socket.emit('tags', game.currentTags)
+      game.players.forEach((player) => {
+        if (player.id === socket.id) {
+          player.score = socket.score + game.time
+        }
+      })
+      game.end()
     }
   })
   socket.on('disconnect', function () {
-    var playerIndex = game.players.indexOf(socket.username)
-    game.players.splice(playerIndex, 1)
-    console.log('user leave', socket.username, game.players)
+    game.players.forEach((player, i) => {
+      if (player.id === socket.id) {
+        game.players.splice(i, 1)
+      }
+    })
+    io.emit('players', game.players)
+    console.log('user leave', socket.id, game.players)
   })
 })
 
