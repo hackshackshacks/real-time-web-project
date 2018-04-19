@@ -7,6 +7,7 @@ var app = {
   },
   init: function () {
     connect.init()
+    // connect.socket.emit('join', )
     this.handleEvents()
   },
   handleEvents: function () {
@@ -38,16 +39,15 @@ var connect = {
   handleEvents: function () {
     if (app.elements.guessForm) {
       this.socket.on('photo', function (photo) {
+        console.log(photo)
         helper.replaceHTML(app.elements.photo, '<img src="' + photo + '">')
       })
     }
     if (app.elements.createRoomForm) {
       this.socket.on('create', function (result) {
         if (!result) {
-          console.log(result)
           helper.replaceHTML(app.elements.createRoomForm["result"], 'Sorry, this name is already taken')
         } else {
-          console.log('<a href="room/' + result + '>Play now</a>')
           helper.replaceHTML(app.elements.createRoomForm["result"], '<a href="room/?room=' + result + '">Play now</a>')
         }
       })

@@ -5,6 +5,11 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const nunjucks = require('nunjucks')
 const compression = require('compression')
+var Flickr = require("flickrapi"),
+    flickrOptions = {
+      api_key: "9d92a174005496d4546996d8d943d57a",
+      secret: "fd0e411a39c26730"
+    };
 
 app.use(compression())
 app.use(express.static(`${__dirname}/assets`))
@@ -19,33 +24,22 @@ const game = {
   currentTags: ['bird', 'fly', 'redwing'],
   players: [],
   init: function() {
-    this.setPhoto()
-  },
-  setPhoto: function () {
-    io.emit('photo', 'https://farm1.staticflickr.com/906/40805823094_d049bb4c81.jpg')
-    // api.getPhoto()
   }
 }
 const api = {
   getPhoto: function() {
     this.random = helper.randomize(1, 50)
-    fetch(
-      `https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&api_key=1ebc0f19751593518831a641597b0b54&per_page=1&page=1&format=json&nojsoncallback=1&auth_token=72157667912956018-91e4c43c5e872beb&api_sig=d4000a3ab20861b3e61fbeba93dbe835`
-    )
-      .then(response => {
-        return response.json()
+    Flickr.tokenOnly(flickrOptions, function(error, flickr) {
+      flickr.interestingness.getList({
+        page: api.random,
+        per_page: 1
+      }, function(err, result) {
+        io.emit('photo', api.generateUrl(result.photos.photo[0]))
       })
-      .then(data => {
-        game.currentPhoto = api.generateUrl(data.photos.photo[0])
-      })
-      .then(() => {
-        console.log(game.currentPhoto)
-      })
+    })
   },
-  generateUrl: function(photo) {
-    return `https://farm${photo.farm}.staticflickr.com/${photo.server}/${
-      photo.id
-    }_${photo.secret}.jpg`
+  generateUrl: function (photo) {
+    return `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`
   }
 }
 
@@ -72,13 +66,14 @@ app.get('/room', (req, res) => {
 
 io.on('connection', function (socket) {
   console.log('user enter')
+  api.getPhoto()
   game.players.push(socket.id)
-  game.setPhoto()
   socket.on('create', function (name) {
     console.log(socket.rooms)
     if (!socket.rooms.name) {
       socket.join(name)
       socket.emit('create', name)
+      socket.to(name).emit(api.getPhoto())
     } else {
       socket.emit('create', false)
     }
@@ -87,6 +82,7 @@ io.on('connection', function (socket) {
   socket.on('join', function (name) {
     if (socket.rooms.name) {
       socket.join(name)
+      console.log(socket)
     }
   })
   socket.on('name', function (name) {
