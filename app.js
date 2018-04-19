@@ -6,8 +6,8 @@ const nunjucks = require('nunjucks')
 const compression = require('compression')
 var Flickr = require("flickrapi"),
     flickrOptions = {
-      api_key: "9d92a174005496d4546996d8d943d57a",
-      secret: "fd0e411a39c26730"
+      api_key: process.env.API_KEY,
+      secret: process.env.SECRET
     };
 
 app.use(compression())
@@ -21,24 +21,24 @@ nunjucks.configure('assets/views', {
 const game = {
   currentPhoto: '',
   players: [],
-  duration: 30,
-  gameTime: 30,
+  duration: 10,
+  time: 10,
   active: true,
   init: function() {
     api.getPhoto()
     setInterval(function () {
-      if (game.gameTime > 0) {
-        game.gameTime--
-        io.emit('gameTime', game.gameTime)
-      } else if (game.gameTime === 0 && game.active) {
+      if (game.time > 0 && game.active) {
+        game.time--
+        io.emit('time', game.time)
+      } else if (game.time === 0 && game.active) {
         game.active = false
         io.emit('tags', game.currentTags)
-        io.emit('gameTime', game.gameTime)
+        io.emit('time', game.time)
         setTimeout(() => {
           game.active = true
           api.getPhoto()
-          game.gameTime = game.duration
-          io.emit('gameTime', game.gameTime)
+          game.time = game.duration
+          io.emit('time', game.time)
         }, 5000)
       }
     }, 1000)
@@ -92,6 +92,7 @@ app.get('/', (req, res) => {
 io.on('connection', function (socket) {
   console.log('user enter')
   socket.username = socket.id
+  socket.score = 0
   game.players.push(socket.username)
   socket.emit('photo', game.currentPhoto)
   socket.on('name', function (name) {
@@ -104,9 +105,10 @@ io.on('connection', function (socket) {
     console.log('guess:', guess)
     console.log('guess in array:', helper.checkArray(game.currentTags, guess.toLowerCase()))
     console.log(game.currentTags)
-    console.log(socket.username || socket.id)
     if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
-      io.emit('score', socket.username || socket.id)
+      socket.score = socket.score + game.time
+      game.active = false
+      socket.emit('tags', game.currentTags)
     }
   })
   socket.on('disconnect', function () {

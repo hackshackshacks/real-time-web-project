@@ -30,11 +30,16 @@ var connect = {
     this.socket.on('photo', function (photo) {
       helper.replaceHTML(app.elements.photo, '<img src="' + photo + '">')
     })
-    this.socket.on('gameTime', function (time) {
+    this.socket.on('time', function (time) {
       helper.replaceHTML(app.elements.time, time)
     })
     this.socket.on('tags', function (tags) {
-      helper.replaceHTML(app.elements.tags, tags)
+      var list = '<ul>'
+      tags.forEach(function (tag) {
+        list += ('<li>' + tag + '</li>')
+      })
+      list += '</ul>'
+      helper.replaceHTML(app.elements.tags, list)
     })
   }
 }
