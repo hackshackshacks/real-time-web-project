@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const fetch = require('node-fetch')
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const nunjucks = require('nunjucks')
@@ -21,20 +20,49 @@ nunjucks.configure('assets/views', {
 
 const game = {
   currentPhoto: '',
-  currentTags: ['bird', 'fly', 'redwing'],
   players: [],
+  duration: 30,
+  gameTime: 30,
+  active: true,
   init: function() {
+    api.getPhoto()
+    setInterval(function () {
+      if (game.gameTime > 0) {
+        game.gameTime--
+        io.emit('gameTime', game.gameTime)
+      } else if (game.gameTime === 0 && game.active) {
+        game.active = false
+        io.emit('tags', game.currentTags)
+        io.emit('gameTime', game.gameTime)
+        setTimeout(() => {
+          game.active = true
+          api.getPhoto()
+          game.gameTime = game.duration
+          io.emit('gameTime', game.gameTime)
+        }, 5000)
+      }
+    }, 1000)
   }
 }
 const api = {
   getPhoto: function() {
-    this.random = helper.randomize(1, 50)
+    this.random = helper.randomize(1, 500)
     Flickr.tokenOnly(flickrOptions, function(error, flickr) {
+      console.log(api.random)
       flickr.interestingness.getList({
         page: api.random,
         per_page: 1
       }, function(err, result) {
-        io.emit('photo', api.generateUrl(result.photos.photo[0]))
+        game.currentPhoto = api.generateUrl(result.photos.photo[0])
+        flickr.tags.getListPhoto({
+          photo_id: result.photos.photo[0].id
+        }, function(err, result) {
+          io.emit('photo', game.currentPhoto)
+          game.currentTags = result.photo.tags.tag.map((obj) => {
+            var tag = obj.raw.toLowerCase()
+            return tag
+          })
+        })
       })
     })
   },
@@ -60,40 +88,31 @@ const helper = {
 app.get('/', (req, res) => {
   res.render('index.html')
 })
-app.get('/room', (req, res) => {
-  res.render('room.html')
-})
 
 io.on('connection', function (socket) {
   console.log('user enter')
-  api.getPhoto()
-  game.players.push(socket.id)
-  socket.on('create', function (name) {
-    console.log(socket.rooms)
-    if (!socket.rooms.name) {
-      socket.join(name)
-      socket.emit('create', name)
-      socket.to(name).emit(api.getPhoto())
-    } else {
-      socket.emit('create', false)
-    }
-    console.log('current rooms: ', socket.rooms)
-  })
-  socket.on('join', function (name) {
-    if (socket.rooms.name) {
-      socket.join(name)
-      console.log(socket)
-    }
-  })
+  socket.username = socket.id
+  game.players.push(socket.username)
+  socket.emit('photo', game.currentPhoto)
   socket.on('name', function (name) {
+    var playerIndex = game.players.indexOf(socket.username)
+    game.players[playerIndex] = name
     socket.username = name
-    console.log(socket.username, 'iets')
+    console.log('new username:', socket.username)
   })
   socket.on('guess', function (guess) {
-    console.log(helper.checkArray(game.currentTags, guess.toLowerCase()))
+    console.log('guess:', guess)
+    console.log('guess in array:', helper.checkArray(game.currentTags, guess.toLowerCase()))
+    console.log(game.currentTags)
+    console.log(socket.username || socket.id)
+    if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
+      io.emit('score', socket.username || socket.id)
+    }
   })
   socket.on('disconnect', function () {
-    console.log('user leave')
+    var playerIndex = game.players.indexOf(socket.username)
+    game.players.splice(playerIndex, 1)
+    console.log('user leave', socket.username, game.players)
   })
 })
 
