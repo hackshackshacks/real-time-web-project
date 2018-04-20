@@ -119,16 +119,17 @@ io.on('connection', function (socket) {
     io.emit('players', game.players)
   })
   socket.on('guess', function (guess) {
-    console.log('guess:', guess)
-    console.log('guess in array:', helper.checkArray(game.currentTags, guess.toLowerCase()))
-    console.log(game.currentTags)
-    if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
-      game.players.forEach((player) => {
-        if (player.id === socket.id) {
-          player.score = socket.score + game.time
-        }
-      })
-      game.end()
+    console.log('guess:', guess, 'by: ', socket.id)
+    if (game.active) {
+      if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
+        game.players.forEach((player) => {
+          if (player.id === socket.id) {
+            player.score = player.score + game.time
+          }
+        })
+        io.emit('players', game.players)
+        game.end()
+      }
     }
   })
   socket.on('disconnect', function () {
