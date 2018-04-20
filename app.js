@@ -21,8 +21,9 @@ nunjucks.configure('assets/views', {
 const game = {
   currentPhoto: '',
   players: [],
-  duration: 10,
-  time: 10,
+  allGuesses: [],
+  duration: 60,
+  time: 60,
   active: true,
   init: function() {
     api.getPhoto()
@@ -42,8 +43,8 @@ const game = {
   end: function () {
     game.active = false
     io.emit('gameState', game.active)
-    io.emit('tags', game.currentTags)
     io.emit('time', game.time)
+    game.score()
     setTimeout(() => {
       game.reset()
     }, 5000)
@@ -54,13 +55,27 @@ const game = {
     api.getPhoto()
     game.time = game.duration
     io.emit('time', game.time)
+  },
+  score: function () {
+    game.players.forEach((player) => {
+      player.guesses.forEach((guess) => {
+        game.allGuesses.forEach((allGuess) => {
+          if (allGuess === guess) {
+            player.score++
+          }
+        })
+      })
+      if ((player.score - player.guesses.length) >= 0) {
+        player.score = player.score - player.guesses.length
+      }
+    })
+    io.emit('players', game.players)
   }
 }
 const api = {
   getPhoto: function() {
     this.random = helper.randomize(1, 500)
     Flickr.tokenOnly(flickrOptions, function(error, flickr) {
-      console.log(api.random)
       flickr.interestingness.getList({
         page: api.random,
         per_page: 1
@@ -106,6 +121,7 @@ io.on('connection', function (socket) {
   game.players.push({
     id: socket.id,
     username: socket.id,
+    guesses: [],
     score: 0
   })
   socket.emit('photo', game.currentPhoto)
@@ -121,15 +137,13 @@ io.on('connection', function (socket) {
   socket.on('guess', function (guess) {
     console.log('guess:', guess, 'by: ', socket.id)
     if (game.active) {
-      if (helper.checkArray(game.currentTags, guess.toLowerCase())) {
         game.players.forEach((player) => {
           if (player.id === socket.id) {
-            player.score = player.score + game.time
+            player.guesses.push(guess)
+            game.allGuesses.push(guess)
           }
         })
         io.emit('players', game.players)
-        game.end()
-      }
     }
   })
   socket.on('disconnect', function () {

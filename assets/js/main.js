@@ -19,7 +19,9 @@ var app = {
     })
     this.elements.guessForm.addEventListener('submit', function (e) {
       e.preventDefault()
-      connect.socket.emit('guess', this["guess"].value)
+      if (this["guess"].value) {
+        connect.socket.emit("guess", this["guess"].value)
+      }
     })
   }
 }
