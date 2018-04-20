@@ -44,12 +44,10 @@ var connect = {
       helper.replaceHTML(app.elements.tags, list)
     })
     this.socket.on('players', function (players) {
-      console.log(players)
-      var list = '<ul>'
+      var list = ''
       players.forEach(function (player) {
         list += ('<li>' + player.username + '<span>:' + player.score + '</span></li>')
       })
-      list += '</ul>'
       helper.replaceHTML(app.elements.players, list)
     })
     this.socket.on('gameState', function (state) {
