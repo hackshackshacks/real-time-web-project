@@ -81,15 +81,7 @@ const api = {
         per_page: 1
       }, function(err, result) {
         game.currentPhoto = api.generateUrl(result.photos.photo[0])
-        flickr.tags.getListPhoto({
-          photo_id: result.photos.photo[0].id
-        }, function(err, result) {
-          io.emit('photo', game.currentPhoto)
-          game.currentTags = result.photo.tags.tag.map((obj) => {
-            var tag = obj.raw.toLowerCase()
-            return tag
-          })
-        })
+        io.emit('photo', game.currentPhoto)
       })
     })
   },
