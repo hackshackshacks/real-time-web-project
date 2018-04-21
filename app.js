@@ -11,9 +11,9 @@ var Flickr = require("flickrapi"),
     };
 
 app.use(compression())
-app.use(express.static(`${__dirname}/assets`))
+app.use(express.static(`${__dirname}/assets/dist`))
 
-nunjucks.configure('assets/views', {
+nunjucks.configure('views', {
   autoescape: true,
   express: app
 })
