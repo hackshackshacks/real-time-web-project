@@ -138,12 +138,14 @@ io.on('connection', function (socket) {
     io.emit('players', game.players)
   })
   socket.on('guess', function (guess) {
-    console.log('guess:', guess, 'by: ', socket.id)
     if (game.active) {
         game.players.forEach((player) => {
           if (player.id === socket.id) {
-            player.guesses.push(guess)
-            game.allGuesses.push(guess)
+            if (!player.guesses.includes(guess)) {
+              console.log('guess:', guess, 'by: ', socket.id)
+              player.guesses.push(guess)
+              game.allGuesses.push(guess)
+            }
           }
         })
         io.emit('players', game.players)

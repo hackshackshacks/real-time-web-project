@@ -20,7 +20,7 @@ var app = {
     this.elements.guessForm.addEventListener('submit', function (e) {
       e.preventDefault()
       if (this["guess"].value) {
-        connect.socket.emit("guess", this["guess"].value)
+        connect.socket.emit("guess", this["guess"].value.toLowerCase())
         this["guess"].value = ''
       }
     })
