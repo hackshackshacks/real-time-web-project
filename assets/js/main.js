@@ -21,6 +21,7 @@ var app = {
       e.preventDefault()
       if (this["guess"].value) {
         connect.socket.emit("guess", this["guess"].value)
+        this["guess"].value = ''
       }
     })
   }

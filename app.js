@@ -22,52 +22,54 @@ const game = {
   currentPhoto: '',
   players: [],
   allGuesses: [],
-  duration: 60,
-  time: 60,
+  duration: 10,
+  time: 10,
   active: true,
   init: function() {
     api.getPhoto()
     game.start()
   },
   start: function () {
-    io.emit('gameState', game.active)
-    setInterval(function () {
-      if (game.time > 0 && game.active) {
-        game.time--
-        io.emit('time', game.time)
-      } else if (game.time === 0 && game.active) {
-        game.end()        
+    io.emit('gameState', this.active)
+    setInterval(() => {
+      if (this.time > 0 && this.active) {
+        this.time--
+        io.emit('time', this.time)
+      } else if (this.time === 0 && this.active) {
+        this.end()        
       }
     }, 1000)
   },
   end: function () {
-    game.active = false
-    io.emit('gameState', game.active)
-    io.emit('time', game.time)
-    game.score()
+    this.active = false
+    io.emit('gameState', this.active)
+    io.emit('time', this.time)
+    this.score()
     setTimeout(() => {
-      game.reset()
+      this.reset()
     }, 5000)
   },
   reset: function () {
-    game.active = true
-    io.emit('gameState', game.active)
+    this.active = true
+    this.allGuesses = []
+    console.log(game.allGuesses, 'this:', this.allGuesses)
+    io.emit('gameState', this.active)
     api.getPhoto()
-    game.time = game.duration
-    io.emit('time', game.time)
+    this.time = game.duration
+    io.emit('time', this.time)
   },
-  score: function () {
+  score: function () { // Compare player guess array to allGuesses array. Every time a player guess is found in the allGuesses array 1 point is added to player.score
     game.players.forEach((player) => {
+      console.log('guesses:', player.guesses)
       player.guesses.forEach((guess) => {
-        game.allGuesses.forEach((allGuess) => {
-          if (allGuess === guess) {
-            player.score++
-          }
-        })
+        let count = helper.countArray(this.allGuesses, guess) - 1
+        if (count < 0) { // prevent negative count
+          count = 0
+        }
+        console.log('all', this.allGuesses, 'guess', guess, 'score:', player.score, 'count:', count)
+        player.score = player.score + count
+        player.guesses = []
       })
-      if ((player.score - player.guesses.length) >= 0) {
-        player.score = player.score - player.guesses.length
-      }
     })
     io.emit('players', game.players)
   }
@@ -102,6 +104,15 @@ const helper = {
       }
     })
     return hasValue
+  },
+  countArray: function(array, value) {
+    let count = 0
+    array.forEach((item) => {
+      if (item === value) {
+        count++
+      }
+    })
+    return count
   }
 }
 app.get('/', (req, res) => {
