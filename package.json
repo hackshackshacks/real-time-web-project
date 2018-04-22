@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "nodemon app.js",
     "start": "node app.js",
-    "postinstall": "gulp default"
+    "postinstall": "gulp prod"
   },
   "repository": {
     "type": "git",
