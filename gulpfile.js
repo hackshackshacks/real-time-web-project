@@ -8,7 +8,6 @@ const imagemin = require('gulp-imagemin')
 const webp = require('gulp-webp')
 const clean = require('gulp-clean')
 const gulpSequence = require('gulp-sequence')
-const connect = require('gulp-connect')
 const open = require('gulp-open')
 
 /* === Tasks === */
@@ -18,7 +17,6 @@ gulp.task('render', () => {
   gulp
     .src('assets/src/views/*.html')
     .pipe(gulp.dest('dist'))
-    .pipe(connect.reload())
 })
 
 /* Compile sass */
@@ -27,7 +25,6 @@ gulp.task('sass', () => {
     .src('assets/src/styles/main.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('assets/dist/css'))
-    .pipe(connect.reload())
 })
 
 /* Compile sass and minify for production */
@@ -49,7 +46,6 @@ gulp.task('bundle', () => {
       })
     )
     .pipe(gulp.dest('assets/dist/js'))
-    .pipe(connect.reload())
 })
 
 /* Bundle scripts and minify */
@@ -71,7 +67,6 @@ gulp.task('images', () => {
   gulp
     .src('assets/src/images/**/*')
     .pipe(gulp.dest('assets/dist/images'))
-    .pipe(connect.reload())
 })
 
 gulp.task('images-p', () => {
@@ -89,7 +84,6 @@ gulp.task('fonts', () => {
   gulp
     .src('assets/src/fonts/*')
     .pipe(gulp.dest('assets/dist/fonts'))
-    .pipe(connect.reload())
 })
 
 /* Watch files for changes */
@@ -106,15 +100,6 @@ gulp.task('clean', () => {
   gulp.src('dist').pipe(clean())
 })
 
-// Start server
-gulp.task('connect', () => {
-  connect.server({
-    port: 5000,
-    root: '.',
-    livereload: true
-  })
-})
-
 // Combined tasks
 gulp.task('default', [
   'render',
@@ -122,7 +107,6 @@ gulp.task('default', [
   'bundle',
   'images',
   'fonts',
-  'connect',
   'watch'
 ])
 
@@ -134,6 +118,5 @@ gulp.task(
     'bundle-p',
     'images-p',
     'fonts',
-    'connect'
   ])
 )
