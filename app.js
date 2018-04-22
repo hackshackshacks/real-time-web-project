@@ -22,8 +22,8 @@ const game = {
   currentPhoto: '',
   players: [],
   allGuesses: [],
-  duration: 10,
-  time: 10,
+  duration: 60,
+  time: 60,
   active: true,
   init: function() {
     api.getPhoto()
@@ -71,7 +71,17 @@ const game = {
         player.guesses = []
       })
     })
+    game.sortPlayers()
     io.emit('players', game.players)
+  },
+  sortPlayers: function () {
+    game.players = game.players.sort((a, b) => {
+      if (a.score > b.score)
+      return -1;
+      if (a.score < b.score)
+        return 1;
+      return 0;
+    })
   }
 }
 const api = {
@@ -143,12 +153,12 @@ io.on('connection', function (socket) {
           if (player.id === socket.id) {
             if (!player.guesses.includes(guess)) {
               console.log('guess:', guess, 'by: ', socket.id)
+              socket.emit('newGuess', guess)
               player.guesses.push(guess)
               game.allGuesses.push(guess)
             }
           }
         })
-        io.emit('players', game.players)
     }
   })
   socket.on('disconnect', function () {
