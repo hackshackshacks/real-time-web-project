@@ -6,17 +6,14 @@ var app = {
     tags: document.querySelector('#tags'),
     players: document.querySelector('#players'),
     guessForm: document.forms["guessForm"],
-    nameForm: document.forms["nameForm"]
+    progress: document.querySelector('progress'),
+    guesses: document.querySelector('.guesses')
   },
   init: function () {
     connect.init()
     this.handleEvents()
   },
   handleEvents: function () {
-    this.elements.nameForm.addEventListener('submit', function(e) {
-      e.preventDefault()
-      connect.socket.emit('name', this["name"].value)
-    })
     this.elements.guessForm.addEventListener('submit', function (e) {
       e.preventDefault()
       if (this["guess"].value) {
@@ -36,22 +33,30 @@ var connect = {
       helper.replaceHTML(app.elements.photo, '<img src="' + photo + '">')
     })
     this.socket.on('time', function (time) {
-      helper.replaceHTML(app.elements.time, time)
-    })
-    this.socket.on('tags', function (tags) {
-      var list = '<ul>'
-      tags.forEach(function (tag) {
-        list += ('<li>' + tag + '</li>')
-      })
-      list += '</ul>'
-      helper.replaceHTML(app.elements.tags, list)
+      app.elements.progress.value = time
+      if (time < 6 && time > 0) {
+        helper.replaceHTML(app.elements.time, time)
+      } else if (time === 0) {
+        helper.replaceHTML(app.elements.time, "Time's up!")
+        helper.replaceHTML(app.elements.guesses, '')
+      } else {
+        helper.replaceHTML(app.elements.time, "")
+      }
     })
     this.socket.on('players', function (players) {
       var list = ''
-      players.forEach(function (player) {
-        list += ('<li>' + player.username + '<span>:' + player.score + '</span></li>')
+      players.forEach(function (player, i) {
+        if (player.id === connect.socket.id) {
+          list += (`<li class="active"><div class="player"><span contenteditable class="playerName">${player.username}</span><span>${player.score} points</span></div><div class="rank">#${i + 1}</div></li>`)
+        } else {
+          list += (`<li><div class="player"><span>${player.username}</span><span>${player.score} points</span></div><div class="rank">#${i + 1}</div></li>`)
+        }
       })
       helper.replaceHTML(app.elements.players, list)
+      let playerName = document.querySelector('.playerName')
+      playerName.addEventListener('blur', function(e) {
+        connect.socket.emit('name', playerName.innerText)
+      })
     })
     this.socket.on('gameState', function (state) {
       if (state) {
@@ -59,6 +64,9 @@ var connect = {
       } else {
         app.elements.wrap.dataset.active = false
       }
+    })
+    this.socket.on('newGuess', (guess) => {
+      app.elements.guesses.insertAdjacentHTML('beforeend', `<span>${guess}</span>`)
     })
   }
 }
