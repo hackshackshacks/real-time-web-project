@@ -1,20 +1,24 @@
 <section id="wrap" data-active="true">
+  <h1>Identify</h1>
   <aside>
+    <h2>Score</h2>
     <ul id="players">
     </ul>
   </aside>
   <main>
-    <span id="time"></span>
-    <span id="tags"></span>
-    <form name="nameForm">
-      <label for="name">Name: <input type="text" id="name"></label>
-      <button type="submit">submit</button>
-    </form>
+    <span id="time" class="time"></span>
     <picture id="imageWrap">
     </picture>
-    <form name="guessForm">
-      <label for="guess">Guess: <input type="text" id="guess"></label>
-      <button type="submit">submit</button>
-    </form>
   </main>
+  <div class="guesses"></div>
+  <form name="guessForm">
+    <label for="guess">Your guess</label>
+    <input type="text" id="guess" placeholder="Describe what you see in the picture">
+    <button type="submit">submit</button>
+  </form>
+  <progress value="60" max="60"></progress>
 </section>
+    <!-- <form name="nameForm">
+      <label for="name">Name: <input type="text" id="name"></label>
+      <button type="submit">submit</button>
+    </form> -->
