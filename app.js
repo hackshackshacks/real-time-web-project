@@ -22,8 +22,8 @@ const game = {
   currentPhoto: '',
   players: [],
   allGuesses: [],
-  duration: 60,
-  time: 60,
+  duration: 30,
+  time: 30,
   active: true,
   init: function() {
     api.getPhoto()
