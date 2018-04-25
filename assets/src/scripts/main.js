@@ -7,7 +7,9 @@ var app = {
     players: document.querySelector('#players'),
     guessForm: document.forms["guessForm"],
     progress: document.querySelector('progress'),
-    guesses: document.querySelector('.guesses')
+    guesses: document.querySelector('.guesses'),
+    popOver: document.querySelector('.pop-over'),
+    startButton: document.querySelector('.pop-over button')
   },
   init: function () {
     connect.init()
@@ -20,6 +22,9 @@ var app = {
         connect.socket.emit("guess", this["guess"].value.toLowerCase())
         this["guess"].value = ''
       }
+    })
+    this.elements.startButton.addEventListener('click', () => {
+      this.elements.popOver.classList.remove('start')
     })
   }
 }
@@ -73,6 +78,13 @@ var connect = { // handle socket events
       guesses.forEach((guess) => {
         app.elements.guesses.insertAdjacentHTML('beforeend', `<span class="all">${guess}</span>`)
       })
+    })
+    this.socket.on('connect_error', function(err) {
+      app.elements.popOver.classList.add('offline')
+      app.elements.popOver.classList.remove('start')
+    })
+    this.socket.on('connect', function() {
+      app.elements.popOver.classList.remove('offline')
     })
   }
 }
