@@ -8,6 +8,25 @@ Imageguess is an online multiplayer game. The website shows an image and the goa
 ![Showoff](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/home.png?raw=true)
 
 <!-- Maybe a table of contents here? 📚 -->
+- [Imageguess](#imageguess)
+  * [Demo](#demo)
+  * [Setup](#setup)
+    + [Step 1](#step-1)
+    + [Step 2](#step-2)
+    + [Step 3](#step-3)
+  * [Features](#features)
+    + [Picture](#picture)
+    + [Timer](#timer)
+    + [Guessing](#guessing)
+      - [During the game](#during-the-game)
+      - [After the game](#after-the-game)
+    + [Scoring](#scoring)
+    + [Naming](#naming)
+  * [External sources](#external-sources)
+    + [Flickr](#flickr)
+    + [Socket.io](#socketio)
+  * [Data management](#data-management)
+  * [Todo](#todo)
 
 <!-- How about a section that describes how to install this project? 🤓 -->
 ## Setup
