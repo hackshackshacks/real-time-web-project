@@ -85,7 +85,7 @@ Because the used data doesn't require to be remembered longer than the game time
 
 It's looks something like this:
 
-[data model](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/data.png?raw=true)
+![data model](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/data.png?raw=true)
 
 ## Todo
 * Creating and joining a room
