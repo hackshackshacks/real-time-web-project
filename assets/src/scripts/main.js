@@ -79,10 +79,15 @@ var connect = { // handle socket events
         app.elements.guesses.insertAdjacentHTML('beforeend', `<span class="all">${guess}</span>`)
       })
     })
-    this.socket.on('connect_error', function(err) {
+    this.socket.on('reconnecting', (attemptNumber) => {
+      console.log('attemptnumber', attemptNumber)
       app.elements.popOver.classList.add('offline')
       app.elements.popOver.classList.remove('start')
     })
+    // this.socket.on('connect_error', function(err) {
+    //   app.elements.popOver.classList.add('offline')
+    //   app.elements.popOver.classList.remove('start')
+    // })
     this.socket.on('connect', function() {
       app.elements.popOver.classList.remove('offline')
     })
