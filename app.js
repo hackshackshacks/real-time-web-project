@@ -64,26 +64,16 @@ const game = {
       console.log('guesses:', player.guesses)
       player.guesses.forEach(guess => {
         let count = helper.countArray(this.allGuesses, guess) - 1
-        if (count < 0) {
-          // prevent negative count
+        if (count < 0) { // prevent negative count
           count = 0
         }
-        console.log(
-          'all',
-          this.allGuesses,
-          'guess',
-          guess,
-          'score:',
-          player.score,
-          'count:',
-          count
-        )
         player.score = player.score + count
         player.guesses = []
       })
     })
     game.sortPlayers()
-    io.emit('players', game.players)
+    io.emit('players', this.players)
+    io.emit('allGuesses', helper.removeDuplicates(this.allGuesses))
   },
   sortPlayers: function() {
     game.players = game.players.sort((a, b) => {
@@ -138,6 +128,9 @@ const helper = {
       }
     })
     return count
+  },
+  removeDuplicates: function (array) {
+    return [...new Set(array)]
   }
 }
 app.get('/', (req, res) => {

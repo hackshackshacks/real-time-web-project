@@ -138,6 +138,11 @@ section {
       padding: 0.4375rem 1.3125rem;
       margin-right: 1rem;
       margin-bottom: 1rem;
+      animation: fadeIn 300ms forwards;
+      &.all {
+        background: $color-brand;
+        color: white;
+      }
     }
   }
   >form {
@@ -192,4 +197,12 @@ section {
     }
   }
 
+}
+@keyframes fadeIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }

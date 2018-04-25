@@ -61,12 +61,18 @@ var connect = {
     this.socket.on('gameState', function (state) {
       if (state) {
         app.elements.wrap.dataset.active = true
+        helper.emptyElement(app.elements.guesses)
       } else {
         app.elements.wrap.dataset.active = false
       }
     })
     this.socket.on('newGuess', (guess) => {
       app.elements.guesses.insertAdjacentHTML('beforeend', `<span>${guess}</span>`)
+    })
+    this.socket.on('allGuesses', (guesses) => {
+      guesses.forEach((guess) => {
+        app.elements.guesses.insertAdjacentHTML('beforeend', `<span class="all">${guess}</span>`)
+      })
     })
   }
 }
