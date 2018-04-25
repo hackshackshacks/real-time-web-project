@@ -29,7 +29,7 @@ const game = {
     api.getPhoto()
     game.start()
   },
-  start: function() {
+  start: function() { // start the game initially and begin the interval for time
     io.emit('gameState', this.active)
     setInterval(() => {
       if (this.time > 0 && this.active) {
@@ -40,34 +40,33 @@ const game = {
       }
     }, 1000)
   },
-  end: function() {
+  end: function() { // end the game and trigger score
     this.active = false
     io.emit('gameState', this.active)
     io.emit('time', this.time)
     this.score()
-    setTimeout(() => {
+    setTimeout(() => { //reset the game after 5 seconds
       this.reset()
     }, 5000)
   },
-  reset: function() {
+  reset: function() { // reset the game
     this.active = true
     this.allGuesses = []
-    console.log(game.allGuesses, 'this:', this.allGuesses)
     io.emit('gameState', this.active)
-    api.getPhoto()
+    api.getPhoto() // get a new photo
     this.time = game.duration
     io.emit('time', this.time)
   },
   score: function() {
     // Compare player guess array to allGuesses array. Every time a player guess is found in the allGuesses array 1 point is added to player.score
-    game.players.forEach(player => {
+    game.players.forEach(player => { // For each player...
       console.log('guesses:', player.guesses)
-      player.guesses.forEach(guess => {
-        let count = helper.countArray(this.allGuesses, guess) - 1
+      player.guesses.forEach(guess => { // And each of his guesses...
+        let count = helper.countArray(this.allGuesses, guess) - 1 // count items in allguesses...
         if (count < 0) { // prevent negative count
           count = 0
         }
-        player.score = player.score + count
+        player.score = player.score + count // add count to score
         player.guesses = []
       })
     })
@@ -75,7 +74,7 @@ const game = {
     io.emit('players', this.players)
     io.emit('allGuesses', helper.removeDuplicates(this.allGuesses))
   },
-  sortPlayers: function() {
+  sortPlayers: function() { // sort the players based on score
     game.players = game.players.sort((a, b) => {
       if (a.score > b.score) return -1
       if (a.score < b.score) return 1
@@ -84,7 +83,7 @@ const game = {
   }
 }
 const api = {
-  getPhoto: function() {
+  getPhoto: function() { // get a photo data from the Flickr api
     this.random = helper.randomize(1, 500)
     Flickr.tokenOnly(flickrOptions, function(error, flickr) {
       flickr.interestingness.getList(
@@ -99,7 +98,7 @@ const api = {
       )
     })
   },
-  generateUrl: function(photo) {
+  generateUrl: function(photo) { // use data to generate url
     return `https://farm${photo.farm}.staticflickr.com/${photo.server}/${
       photo.id
     }_${photo.secret}.jpg`
@@ -110,8 +109,7 @@ const helper = {
   randomize: function(min, max) {
     return Math.floor(Math.random() * max + min)
   },
-  checkArray: function(arr, value) {
-    // check if value is in array
+  checkArray: function(arr, value) { // check if value is in array
     let hasValue = false
     arr.forEach((item, i) => {
       if (arr[i] === value) {
@@ -120,7 +118,7 @@ const helper = {
     })
     return hasValue
   },
-  countArray: function(array, value) {
+  countArray: function(array, value) { // count how often a value is in an array
     let count = 0
     array.forEach(item => {
       if (item === value) {
@@ -129,7 +127,7 @@ const helper = {
     })
     return count
   },
-  removeDuplicates: function (array) {
+  removeDuplicates: function (array) { // remove duplicates from an array
     return [...new Set(array)]
   }
 }

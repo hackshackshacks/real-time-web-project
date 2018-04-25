@@ -27,7 +27,6 @@ Imageguess is an online multiplayer game. The website shows an image and the goa
 
 ![Showoff](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/home.png?raw=true)
 
-<!-- How about a section that describes how to install this project? 🤓 -->
 ## Setup
 ### Step 1
 `git clone` the repository or simply download the files
@@ -38,7 +37,6 @@ Navigate to the repository in your terminal using `cd {project folder name}` and
 ### Step 3
 After installing the dependencies run `npm start` and navigate to http://localhost:5000/
 
-<!-- ...but how does one use this project? What are its features 🤔 -->
 ## Features
 ### Picture
 The project loads a random picture using the Flickr api mentioned below.
@@ -73,8 +71,6 @@ The user can change his name by clicking on it. It will instantly update for all
 
 ![Naming](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/name.png?raw=true) 
 
-
-<!-- What external data source is featured in your project and what are its properties 🌠 -->
 ## External sources
 ### Flickr
 This project uses the [Flickr api](https://www.flickr.com/services/api/) to retrieve random pictures. Specifically the [interestingness](https://www.flickr.com/services/api/flickr.interestingness.getList.html) list.
