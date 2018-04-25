@@ -84,10 +84,6 @@ var connect = { // handle socket events
       app.elements.popOver.classList.add('offline')
       app.elements.popOver.classList.remove('start')
     })
-    // this.socket.on('connect_error', function(err) {
-    //   app.elements.popOver.classList.add('offline')
-    //   app.elements.popOver.classList.remove('start')
-    // })
     this.socket.on('connect', function() {
       app.elements.popOver.classList.remove('offline')
     })
