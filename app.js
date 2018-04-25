@@ -60,7 +60,6 @@ const game = {
   score: function() {
     // Compare player guess array to allGuesses array. Every time a player guess is found in the allGuesses array 1 point is added to player.score
     game.players.forEach(player => { // For each player...
-      console.log('guesses:', player.guesses)
       player.guesses.forEach(guess => { // And each of his guesses...
         let count = helper.countArray(this.allGuesses, guess) - 1 // count items in allguesses...
         if (count < 0) { // prevent negative count
@@ -136,7 +135,6 @@ app.get('/', (req, res) => {
 })
 
 io.on('connection', function(socket) {
-  console.log('user enter')
   game.players.push({
     id: socket.id,
     username: socket.id,
@@ -158,7 +156,6 @@ io.on('connection', function(socket) {
       game.players.forEach(player => {
         if (player.id === socket.id) {
           if (!player.guesses.includes(guess)) {
-            console.log('guess:', guess, 'by: ', socket.id)
             socket.emit('newGuess', guess)
             player.guesses.push(guess)
             game.allGuesses.push(guess)
@@ -174,7 +171,6 @@ io.on('connection', function(socket) {
       }
     })
     io.emit('players', game.players)
-    console.log('user leave', socket.id, game.players)
   })
 })
 
