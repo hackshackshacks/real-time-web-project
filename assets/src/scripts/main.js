@@ -23,7 +23,7 @@ var app = {
     })
   }
 }
-var connect = {
+var connect = { // handle socket events
   socket: io(),
   init: function () {
     this.handleEvents()
