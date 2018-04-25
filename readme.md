@@ -1,13 +1,7 @@
 # Imageguess
 Imageguess is an online multiplayer game. The website shows an image and the goal is to guess what words the other players associate with this image. For example: Players might associate a picture of the beach with summer. If multiple players guess 'Summer' they will earn points based on the amount of other players with the same guess. A leaderboard tracks the scoreline. 
 
-<!-- Add a nice image here at the end of the week, showing off your shiny frontend 📸 -->
-## Demo
-[Link to demo](https://identify-me.herokuapp.com/)
-
-![Showoff](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/home.png?raw=true)
-
-<!-- Maybe a table of contents here? 📚 -->
+## Table of contents
 - [Imageguess](#imageguess)
   * [Demo](#demo)
   * [Setup](#setup)
@@ -27,6 +21,11 @@ Imageguess is an online multiplayer game. The website shows an image and the goa
     + [Socket.io](#socketio)
   * [Data management](#data-management)
   * [Todo](#todo)
+
+## Demo
+[Link to demo](https://identify-me.herokuapp.com/)
+
+![Showoff](https://github.com/hackshackshacks/real-time-web-project/blob/master/readme_images/home.png?raw=true)
 
 <!-- How about a section that describes how to install this project? 🤓 -->
 ## Setup
