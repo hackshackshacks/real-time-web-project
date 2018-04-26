@@ -26,6 +26,10 @@ var app = {
     this.elements.startButton.addEventListener('click', () => {
       this.elements.popOver.classList.remove('start')
     })
+  },
+  disconnect: function () {
+    this.elements.popOver.classList.add('offline')
+    this.elements.popOver.classList.remove('start')
   }
 }
 var connect = { // handle socket events
@@ -38,6 +42,12 @@ var connect = { // handle socket events
       helper.replaceHTML(app.elements.photo, '<img src="' + photo + '">')
     })
     this.socket.on('time', function (time) {
+      connect.currentTime = time
+      // setTimeout(() => {
+      //   if (connect.currentTime === time && time !== 0) {
+      //     app.disconnect()
+      //   }
+      // }, 4000)
       app.elements.progress.value = time
       if (time < 6 && time > 0) {
         helper.replaceHTML(app.elements.time, time)
@@ -80,9 +90,7 @@ var connect = { // handle socket events
       })
     })
     this.socket.on('reconnecting', (attemptNumber) => {
-      console.log('attemptnumber', attemptNumber)
-      app.elements.popOver.classList.add('offline')
-      app.elements.popOver.classList.remove('start')
+      app.disconnect()
     })
     this.socket.on('connect', function() {
       app.elements.popOver.classList.remove('offline')
