@@ -35,7 +35,16 @@ Imageguess is an online multiplayer game. The website shows an image and the goa
 Navigate to the repository in your terminal using `cd {project folder name}` and run `npm install` to install the project dependencies.
 
 ### Step 3
-After installing the dependencies run `npm start` and navigate to http://localhost:5000/
+Create a `.env` file at the root of the project. This file should look like the following:
+```
+export API_KEY="YOUR_API_KEY"
+export SECRET="YOUR_SECRET"
+```
+You can retrieve an api key and a secret from [the flickr website](https://www.flickr.com/services/api/keys).
+Source the .env file to your inviroment using by running `source .env` in your terminal. Check if it worked by running `printenv` and look for your api key.
+
+### Step 4
+After installing the dependencies run `npm run watch` and navigate to http://localhost:5000/.
 
 ## Features
 ### Picture
@@ -89,3 +98,5 @@ It's looks something like this:
 
 ## Todo
 * Creating and joining a room
+* Update score dynamically
+* More responsive offline states
