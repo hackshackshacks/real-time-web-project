@@ -30,6 +30,9 @@ var app = {
   disconnect: function () {
     this.elements.popOver.classList.add('offline')
     this.elements.popOver.classList.remove('start')
+  },
+  connect: function() {
+    this.elements.popOver.classList.remove('offline')
   }
 }
 var connect = { // handle socket events
@@ -43,12 +46,12 @@ var connect = { // handle socket events
     })
     this.socket.on('time', function (time) {
       connect.currentTime = time
-      // setTimeout(() => {
-      //   if (connect.currentTime === time && time !== 0) {
-      //     app.disconnect()
-      //   }
-      // }, 4000)
       app.elements.progress.value = time
+      if (!navigator.onLine) {
+        app.disconnect()
+      } else {
+        app.connect()
+      }
       if (time < 6 && time > 0) {
         helper.replaceHTML(app.elements.time, time)
       } else if (time === 0) {
