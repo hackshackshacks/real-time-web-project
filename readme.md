@@ -99,4 +99,14 @@ It's looks something like this:
 ## Todo
 * Creating and joining a room
 * Update score dynamically
-* More responsive offline states
+* More responsive offline states:
+```
+this.socket.on('time', function (time) {
+  connect.currentTime = time
+  setTimeout(() => {
+    if (connect.currentTime === time && time !== 0) {
+      app.disconnect()
+    }
+  }, 4000)
+}
+```
